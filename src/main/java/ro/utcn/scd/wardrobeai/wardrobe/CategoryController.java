@@ -2,7 +2,7 @@ package ro.utcn.scd.wardrobeai.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ro.utcn.scd.wardrobeai.model.Category;
+import ro.utcn.scd.wardrobeai.wardrobe.Category;
 import ro.utcn.scd.wardrobeai.repository.CategoryRepository;
 
 import java.util.List;
