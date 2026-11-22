@@ -1,9 +1,7 @@
-package ro.utcn.scd.wardrobeai.controller;
+package ro.utcn.scd.wardrobeai.wardrobe;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ro.utcn.scd.wardrobeai.wardrobe.ClothingItem;
-import ro.utcn.scd.wardrobeai.repository.ClothingItemRepository;
 
 import java.util.List;
 

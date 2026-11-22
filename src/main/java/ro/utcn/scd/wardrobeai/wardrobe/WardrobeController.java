@@ -1,9 +1,7 @@
-package ro.utcn.scd.wardrobeai.controller;
+package ro.utcn.scd.wardrobeai.wardrobe;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ro.utcn.scd.wardrobeai.wardrobe.ClothingItem;
-import ro.utcn.scd.wardrobeai.repository.ClothingItemRepository;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -15,9 +13,12 @@ import java.util.Map;
 public class WardrobeController {
 
     private final ClothingItemRepository repository;
+    private final CategoryRepository categoryRepository;
 
-    public WardrobeController(ClothingItemRepository repository) {
+    public WardrobeController(ClothingItemRepository repository,
+                              CategoryRepository categoryRepository) {
         this.repository = repository;
+        this.categoryRepository = categoryRepository;
     }
 
     // Complex 1: cautare cu filtre (query propriu)
@@ -69,5 +70,20 @@ public class WardrobeController {
             item.setLastWornDate(LocalDate.now());
             return ResponseEntity.ok(repository.save(item));
         }).orElse(ResponseEntity.notFound().build());
+    }
+
+    // Nou: atribuie o categorie unei haine
+    @PutMapping("/{itemId}/category/{categoryId}")
+    public ResponseEntity<ClothingItem> assignCategory(@PathVariable Long itemId,
+                                                       @PathVariable Long categoryId) {
+        ClothingItem item = repository.findById(itemId).orElse(null);
+        Category category = categoryRepository.findById(categoryId).orElse(null);
+
+        if (item == null || category == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        item.setCategory(category);
+        return ResponseEntity.ok(repository.save(item));
     }
 }

@@ -1,6 +1,8 @@
-package ro.utcn.scd.wardrobeai.model;
+package ro.utcn.scd.wardrobeai.wardrobe;
 
 import jakarta.persistence.*;
+import ro.utcn.scd.wardrobeai.model.User;
+
 import java.time.LocalDate;
 
 @Entity

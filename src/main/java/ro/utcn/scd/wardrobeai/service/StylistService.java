@@ -3,8 +3,8 @@ package ro.utcn.scd.wardrobeai.service;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import ro.utcn.scd.wardrobeai.model.ClothingItem;
-import ro.utcn.scd.wardrobeai.repository.ClothingItemRepository;
+import ro.utcn.scd.wardrobeai.wardrobe.ClothingItem;
+import ro.utcn.scd.wardrobeai.wardrobe.ClothingItemRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;

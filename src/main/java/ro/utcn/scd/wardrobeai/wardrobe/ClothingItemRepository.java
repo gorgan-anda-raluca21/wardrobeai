@@ -1,9 +1,8 @@
-package ro.utcn.scd.wardrobeai.repository;
+package ro.utcn.scd.wardrobeai.wardrobe;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ro.utcn.scd.wardrobeai.wardrobe.ClothingItem;
 
 import java.time.LocalDate;
 import java.util.List;

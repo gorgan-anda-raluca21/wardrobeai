@@ -1,6 +1,7 @@
 package ro.utcn.scd.wardrobeai.model;
 
 import jakarta.persistence.*;
+import ro.utcn.scd.wardrobeai.wardrobe.ClothingItem;
 
 @Entity
 public class OutfitItem {
