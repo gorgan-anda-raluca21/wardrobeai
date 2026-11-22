@@ -1,4 +1,4 @@
-package ro.utcn.scd.wardrobeai.service;
+package ro.utcn.scd.wardrobeai.stylist;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -35,17 +35,25 @@ public class StylistService {
         // 2. Construim textul (prompt-ul) pentru model
         StringBuilder wardrobe = new StringBuilder();
         for (ClothingItem item : items) {
+            String category = item.getCategory() == null
+                    ? "necategorizata"
+                    : item.getCategory().getName();
+
             wardrobe.append("id=").append(item.getId())
                     .append(", ").append(item.getName())
+                    .append(", categorie: ").append(category)
                     .append(", culoare: ").append(item.getColor())
                     .append(", brand: ").append(item.getBrand())
+                    .append(", purtata de ").append(item.getTimesWorn()).append(" ori")
                     .append("\n");
         }
 
         String prompt = "Esti un stilist personal. Garderoba utilizatorului:\n"
                 + wardrobe
                 + "\nOcazie: " + occasion + "\nVreme: " + weather
-                + "\n\nAlege o tinuta DOAR din hainele de mai sus. "
+                + "\n\nAlege o tinuta completa DOAR din hainele de mai sus, "
+                + "cu cel putin o piesa de sus si una de jos, daca exista. "
+                + "Prefera piesele purtate mai rar si culori care se potrivesc. "
                 + "Raspunde EXACT in formatul:\n"
                 + "IDS: id1,id2,id3\n"
                 + "EXPLICATIE: o explicatie scurta in romana";
