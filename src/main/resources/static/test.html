@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Test notificari</title>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+</head>
+<body>
+<h2>Notificari WardrobeAI</h2>
+<ul id="lista"></ul>
+<script>
+    const client = new StompJs.Client({ brokerURL: 'ws://localhost:8080/ws' });
+    client.onConnect = function () {
+        client.subscribe('/topic/notifications', function (msg) {
+            const li = document.createElement('li');
+            li.textContent = new Date().toLocaleTimeString() + ' - ' + msg.body;
+            document.getElementById('lista').appendChild(li);
+        });
+    };
+    client.activate();
+</script>
+</body>
+</html>

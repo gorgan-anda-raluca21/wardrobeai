@@ -2,6 +2,7 @@ package ro.utcn.scd.wardrobeai.wardrobe;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ro.utcn.scd.wardrobeai.notification.NotificationService;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -14,11 +15,14 @@ public class WardrobeController {
 
     private final ClothingItemRepository repository;
     private final CategoryRepository categoryRepository;
+    private final NotificationService notificationService;
 
     public WardrobeController(ClothingItemRepository repository,
-                              CategoryRepository categoryRepository) {
+                              CategoryRepository categoryRepository,
+                              NotificationService notificationService) {
         this.repository = repository;
         this.categoryRepository = categoryRepository;
+        this.notificationService = notificationService;
     }
 
     // Complex 1: cautare cu filtre (query propriu)
@@ -62,17 +66,20 @@ public class WardrobeController {
         return result;
     }
 
-    // Complex 4: "poarta piesa" - creste contorul si seteaza data
+    // Complex 4: "poarta piesa" - creste contorul, seteaza data si trimite notificare
     @PostMapping("/wear/{id}")
     public ResponseEntity<ClothingItem> wear(@PathVariable Long id) {
         return repository.findById(id).map(item -> {
             item.setTimesWorn(item.getTimesWorn() + 1);
             item.setLastWornDate(LocalDate.now());
-            return ResponseEntity.ok(repository.save(item));
+            ClothingItem saved = repository.save(item);
+            notificationService.send("Ai purtat: " + saved.getName()
+                    + " (de " + saved.getTimesWorn() + " ori)");
+            return ResponseEntity.ok(saved);
         }).orElse(ResponseEntity.notFound().build());
     }
 
-    // Nou: atribuie o categorie unei haine
+    // Atribuie o categorie unei haine
     @PutMapping("/{itemId}/category/{categoryId}")
     public ResponseEntity<ClothingItem> assignCategory(@PathVariable Long itemId,
                                                        @PathVariable Long categoryId) {
