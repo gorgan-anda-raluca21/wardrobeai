@@ -1,4 +1,4 @@
-package ro.utcn.scd.wardrobeai.model;
+package ro.utcn.scd.wardrobeai.outfit;
 
 import jakarta.persistence.*;
 

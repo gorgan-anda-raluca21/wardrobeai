@@ -1,7 +1,6 @@
-package ro.utcn.scd.wardrobeai.repository;
+package ro.utcn.scd.wardrobeai.outfit;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ro.utcn.scd.wardrobeai.model.Occasion;
 
 public interface OccasionRepository extends JpaRepository<Occasion, Long> {
 }

@@ -1,9 +1,7 @@
-package ro.utcn.scd.wardrobeai.controller;
+package ro.utcn.scd.wardrobeai.outfit;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ro.utcn.scd.wardrobeai.model.Occasion;
-import ro.utcn.scd.wardrobeai.repository.OccasionRepository;
 
 import java.util.List;
 
