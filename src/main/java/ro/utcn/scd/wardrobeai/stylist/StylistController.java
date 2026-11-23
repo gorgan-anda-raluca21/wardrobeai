@@ -17,9 +17,10 @@ public class StylistController {
 
     @GetMapping(value = "/suggest", produces = "application/json;charset=UTF-8")
     public ResponseEntity<?> suggest(@RequestParam String occasion,
-                                     @RequestParam(defaultValue = "vreme normala") String weather) {
+                                     @RequestParam String weather,
+                                     @RequestParam(required = false) Long userId) {
         try {
-            return ResponseEntity.ok(stylistService.suggest(occasion, weather));
+            return ResponseEntity.ok(stylistService.suggest(occasion, weather, userId));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
         }

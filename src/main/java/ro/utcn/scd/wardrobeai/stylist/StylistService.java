@@ -3,6 +3,8 @@ package ro.utcn.scd.wardrobeai.stylist;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import ro.utcn.scd.wardrobeai.user.User;
+import ro.utcn.scd.wardrobeai.user.UserRepository;
 import ro.utcn.scd.wardrobeai.wardrobe.ClothingItem;
 import ro.utcn.scd.wardrobeai.wardrobe.ClothingItemRepository;
 
@@ -18,13 +20,15 @@ public class StylistService {
     private static final String MODEL = "llama3.2";
 
     private final ClothingItemRepository itemRepository;
+    private final UserRepository userRepository;
 
-    public StylistService(ClothingItemRepository itemRepository) {
+    public StylistService(ClothingItemRepository itemRepository, UserRepository userRepository) {
         this.itemRepository = itemRepository;
+        this.userRepository = userRepository;
     }
 
     @SuppressWarnings("unchecked")
-    public Map<String, Object> suggest(String occasion, String weather) {
+    public Map<String, Object> suggest(String occasion, String weather, Long userId) {
 
         // 1. Luam garderoba din baza de date
         List<ClothingItem> items = itemRepository.findAll();
@@ -32,7 +36,17 @@ public class StylistService {
             throw new IllegalStateException("Garderoba este goala. Adauga haine mai intai.");
         }
 
-        // 2. Construim textul (prompt-ul) pentru model
+        // 2. Daca avem un utilizator, luam preferinta lui de stil
+        String stylePreference = "";
+        if (userId != null) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalStateException("Utilizatorul nu exista"));
+            if (user.getStylePreference() != null) {
+                stylePreference = user.getStylePreference();
+            }
+        }
+
+        // 3. Construim textul (prompt-ul) pentru model
         StringBuilder wardrobe = new StringBuilder();
         for (ClothingItem item : items) {
             String category = item.getCategory() == null
@@ -49,8 +63,13 @@ public class StylistService {
         }
 
         String prompt = "Esti un stilist personal. Garderoba utilizatorului:\n"
-                + wardrobe
-                + "\nOcazie: " + occasion + "\nVreme: " + weather
+                + wardrobe;
+
+        if (!stylePreference.isEmpty()) {
+            prompt += "\nPreferinta de stil a utilizatorului: " + stylePreference + "\n";
+        }
+
+        prompt += "\nOcazie: " + occasion + "\nVreme: " + weather
                 + "\n\nAlege o tinuta completa DOAR din hainele de mai sus, "
                 + "cu cel putin o piesa de sus si una de jos, daca exista. "
                 + "Prefera piesele purtate mai rar si culori care se potrivesc. "
@@ -58,7 +77,7 @@ public class StylistService {
                 + "IDS: id1,id2,id3\n"
                 + "EXPLICATIE: o explicatie scurta in romana";
 
-        // 3. Apelam modelul local (Ollama)
+        // 4. Apelam modelul local (Ollama)
         Map<String, Object> body = Map.of(
                 "model", MODEL,
                 "stream", false,
@@ -76,7 +95,7 @@ public class StylistService {
         Map<String, Object> message = (Map<String, Object>) response.get("message");
         String text = (String) message.get("content");
 
-        // 4. Citim raspunsul: linia IDS si EXPLICATIE
+        // 5. Citim raspunsul: linia IDS si EXPLICATIE
         String idsPart = "";
         String explanation = text;
         for (String line : text.split("\n")) {
@@ -89,7 +108,7 @@ public class StylistService {
             explanation = text.substring(pos + 11).trim();
         }
 
-        // 5. Validam: pastram doar id-urile care exista in baza de date
+        // 6. Validam: pastram doar id-urile care exista in baza de date
         List<ClothingItem> chosen = new ArrayList<>();
         for (String part : idsPart.split(",")) {
             try {
