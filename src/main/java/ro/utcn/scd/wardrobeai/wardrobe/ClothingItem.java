@@ -1,7 +1,7 @@
 package ro.utcn.scd.wardrobeai.wardrobe;
 
 import jakarta.persistence.*;
-import ro.utcn.scd.wardrobeai.model.User;
+import ro.utcn.scd.wardrobeai.user.User;
 
 import java.time.LocalDate;
 

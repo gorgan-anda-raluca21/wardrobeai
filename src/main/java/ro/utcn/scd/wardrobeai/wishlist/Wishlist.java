@@ -1,7 +1,7 @@
 package ro.utcn.scd.wardrobeai.wishlist;
 
 import jakarta.persistence.*;
-import ro.utcn.scd.wardrobeai.model.User;
+import ro.utcn.scd.wardrobeai.user.User;
 
 @Entity
 public class Wishlist {
